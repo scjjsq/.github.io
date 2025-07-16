@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>软水与硬水微观示意图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #0d47a1, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 900px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            margin-bottom: 10px;
+            color: #fff;
+            background: linear-gradient(to right, #4fc3f7, #81d4fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 10px 0;
+        }
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #e0e0ff;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            animation: fadeIn 1.5s ease;
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: rgba(0, 30, 60, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            margin-bottom: 25px;
+            border: 2px solid #4a9ce9;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 500px;
+        }
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            background: rgba(0, 40, 80, 0.85);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 15px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+        .legend-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+        .explanation {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .explanation h2 {
+            color: #4fc3f7;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .explanation p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 1.15rem;
+        }
+        .explanation ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        .explanation li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .hard-water {
+            position: absolute;
+            top: 20px;
+            left: 25%;
+            transform: translateX(-50%);
+            font-size: 1.7rem;
+            color: #ff7043;
+            font-weight: bold;
+            text-shadow: 0 0 12px rgba(255, 112, 67, 0.8);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+            border-radius: 30px;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        .soft-water {
+            position: absolute;
+            top: 20px;
+            left: 75%;
+            transform: translateX(-50%);
+            font-size: 1.7rem;
+            color: #4fc3f7;
+            font-weight: bold;
+            text-shadow: 0 0 12px rgba(79, 195, 247, 0.8);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+            border-radius: 30px;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        .divider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.6), transparent);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            z-index: 5;
+        }
+        .btn-container {
+            display: flex;
+            gap: 25px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .btn {
+            background: linear-gradient(to right, #2196f3, #21cbf3);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s;
+        }
+        .btn:hover::after {
+            left: 120%;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            width: 100%;
+            padding: 15px;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .hard-water, .soft-water { font-size: 1.3rem; }
+            .btn-container { flex-direction: column; gap: 15px; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>软水与硬水微观示意图</h1>
+        <p class="subtitle">通过微观粒子运动展示软水与硬水的区别 - 硬水含有钙镁离子，而软水则不含这些矿物离子</p>
+        <div class="btn-container">
+            <button class="btn" id="pauseBtn">暂停/继续</button>
+            <button class="btn" id="resetBtn">重置动画</button>
+            <button class="btn" id="addBubblesBtn">添加气泡</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="canvas-container">
+            <div class="hard-water">硬水 (含Ca²⁺, Mg²⁺)</div>
+            <div class="soft-water">软水 (不含或少含钙镁离子)</div>
+            <div class="divider"></div>
+            <canvas id="waterCanvas"></canvas>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #4fc3f7; box-shadow: 0 0 12px #4fc3f7;"></div>
+                <span>水分子 (H₂O)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ff7043; box-shadow: 0 0 12px #ff7043;"></div>
+                <span>钙离子 (Ca²⁺)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #9575cd; box-shadow: 0 0 12px #9575cd;"></div>
+                <span>镁离子 (Mg²⁺)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ffee58; box-shadow: 0 0 12px #ffee58;"></div>
+                <span>气泡 (空气)</span>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h2>初中化学知识：软水与硬水</h2>
+            <p><strong>硬水</strong>：含较多钙镁离子的水。一般来源于流经石灰岩、石膏矿层的地下水。</p>
+            <p><strong>软水</strong>：不含或含较少钙镁离子的水。通常经过处理或来源于雨水、地表水。</p>
+            <p><strong>区别与影响</strong>：</p>
+            <ul>
+                <li>硬水加热时会产生水垢（碳酸钙沉淀），影响容器导热效率</li>
+                <li>硬水会降低肥皂的洗涤效果，使衣物变硬</li>
+                <li>长期饮用硬水可能增加肾结石风险（需适度软化）</li>
+                <li>工业上使用硬水会导致锅炉结垢，影响热效率甚至引起爆炸</li>
+            </ul>
+            <p><strong>软化方法</strong>：煮沸法（去除暂时硬度）、离子交换法（使用离子交换树脂）、化学沉淀法（加入石灰或纯碱）等。</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+       ©© 2025 峨眉山市第四中学 | 初中化学水的净化教学智能体 | 硬水和软水的区别动画展示
+    </div>
+
+    <script>
+        // 获取Canvas元素和上下文
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas尺寸
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        
+        // 定义常量
+        const TYPES = {
+            WATER: 0,
+            CALCIUM: 1,
+            MAGNESIUM: 2,
+            BUBBLE: 3
+        };
+        
+        const COLORS = {
+            [TYPES.WATER]: '#4fc3f7',
+            [TYPES.CALCIUM]: '#ff7043',
+            [TYPES.MAGNESIUM]: '#9575cd',
+            [TYPES.BUBBLE]: '#ffee58'
+        };
+        
+        const LABELS = {
+            [TYPES.WATER]: 'H₂O',
+            [TYPES.CALCIUM]: 'Ca²⁺',
+            [TYPES.MAGNESIUM]: 'Mg²⁺',
+            [TYPES.BUBBLE]: ''
+        };
+        
+        // 粒子类
+        class Particle {
+            constructor(type, x, y) {
+                this.type = type;
+                this.x = x;
+                this.y = y;
+                this.size = type === TYPES.BUBBLE ? Math.random() * 8 + 4 : Math.random() * 6 + 8;
+                this.speedX = (Math.random() - 0.5) * (type === TYPES.WATER ? 0.8 : 0.4);
+                this.speedY = (Math.random() - 0.5) * (type === TYPES.WATER ? 0.8 : 0.4);
+                this.angle = 0;
+                this.angleSpeed = (Math.random() - 0.5) * 0.04;
+                this.floatSpeed = type === TYPES.BUBBLE ? Math.random() * 0.3 + 0.1 : 0;
+                this.opacity = 1;
+                this.pulse = Math.random() * Math.PI * 2;
+            }
+            
+            update() {
+                // 边界检测
+                if (this.x <= 0 || this.x >= canvas.width) this.speedX *= -0.9;
+                if (this.y <= 0 || this.y >= canvas.height) this.speedY *= -0.9;
+                
+                // 更新位置
+                this.x += this.speedX;
+                this.y += this.speedY - this.floatSpeed;
+                this.angle += this.angleSpeed;
+                this.pulse += 0.03;
+                
+                // 气泡到达顶部时重置
+                if (this.type === TYPES.BUBBLE && this.y < -10) {
+                    this.y = canvas.height + 10;
+                    this.x = Math.random() * canvas.width;
+                }
+                
+                // 粒子间相互作用（简化版）
+                particles.forEach(p => {
+                    if (p !== this) {
+                        const dx = this.x - p.x;
+                        const dy = this.y - p.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (dist < 30 && dist > 0) {
+                            // 排斥力
+                            const force = 0.05 * (1 - dist/30);
+                            this.speedX += (dx/dist) * force;
+                            this.speedY += (dy/dist) * force;
+                        }
+                    }
+                });
+                
+                // 限制速度
+                const maxSpeed = this.type === TYPES.BUBBLE ? 1.5 : 1.0;
+                const speed = Math.sqrt(this.speedX*this.speedX + this.speedY*this.speedY);
+                if (speed > maxSpeed) {
+                    this.speedX = (this.speedX / speed) * maxSpeed;
+                    this.speedY = (this.speedY / speed) * maxSpeed;
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                // 绘制粒子
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                
+                // 脉动效果
+                const pulseScale = 1 + 0.05 * Math.sin(this.pulse);
+                ctx.scale(pulseScale, pulseScale);
+                
+                ctx.fillStyle = COLORS[this.type];
+                if (this.type === TYPES.BUBBLE) {
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // 气泡高光
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.arc(-this.size/3, -this.size/3, this.size/3, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // 绘制离子标签
+                    ctx.font = `${this.size * 0.8}px Arial`;
+                    ctx.fillStyle = 'white';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(LABELS[this.type], 0, 0);
+                }
+                
+                ctx.restore();
+            }
+        }
+        
+        // 创建粒子数组
+        let particles = [];
+        let animationId;
+        let paused = false;
+        
+        // 初始化粒子
+        function initParticles() {
+            particles = [];
+            
+            // 添加水分子（整个画布）
+            for (let i = 0; i < 350; i++) {
+                particles.push(new Particle(
+                    TYPES.WATER,
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            // 硬水区域（左侧）添加钙、镁离子（数量减少）
+            for (let i = 0; i < 20; i++) {
+                particles.push(new Particle(
+                    TYPES.CALCIUM,
+                    Math.random() * canvas.width/2,
+                    Math.random() * canvas.height
+                ));
+            }
+            for (let i = 0; i < 15; i++) {
+                particles.push(new Particle(
+                    TYPES.MAGNESIUM,
+                    Math.random() * canvas.width/2,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            // 添加气泡（主要在硬水区域）
+            for (let i = 0; i < 15; i++) {
+                particles.push(new Particle(
+                    TYPES.BUBBLE,
+                    Math.random() * canvas.width/2,
+                    canvas.height + Math.random() * 100
+                ));
+            }
+        }
+        
+        // 添加更多气泡
+        function addBubbles() {
+            for (let i = 0; i < 10; i++) {
+                particles.push(new Particle(
+                    TYPES.BUBBLE,
+                    Math.random() * canvas.width/2,
+                    canvas.height + Math.random() * 50
+                ));
+            }
+        }
+        
+        // 动画循环
+        function animate() {
+            if (paused) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制半透明背景区分区域
+            ctx.fillStyle = 'rgba(255, 112, 67, 0.06)';
+            ctx.fillRect(0, 0, canvas.width/2, canvas.height);
+            
+            ctx.fillStyle = 'rgba(79, 195, 247, 0.06)';
+            ctx.fillRect(canvas.width/2, 0, canvas.width/2, canvas.height);
+            
+            // 绘制中间分隔线
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.setLineDash([5, 15]);
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // 绘制水分子连接线
+            particles.forEach(p1 => {
+                if (p1.type === TYPES.WATER) {
+                    particles.forEach(p2 => {
+                        if (p2.type === TYPES.WATER && p1 !== p2) {
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            
+                            if (dist < 80) {
+                                ctx.beginPath();
+                                ctx.moveTo(p1.x, p1.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.strokeStyle = `rgba(79, 195, 247, ${0.3 - dist/266})`;
+                                ctx.lineWidth = 1;
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // 更新和绘制粒子
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // 重置动画
+        function resetAnimation() {
+            cancelAnimationFrame(animationId);
+            initParticles();
+            animate();
+        }
+        
+        // 响应窗口大小变化
+        window.addEventListener('resize', () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            resetAnimation();
+        });
+        
+        // 按钮事件监听
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            paused = !paused;
+            if (!paused) animate();
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', resetAnimation);
+        document.getElementById('addBubblesBtn').addEventListener('click', addBubbles);
+        
+        // 初始化
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>

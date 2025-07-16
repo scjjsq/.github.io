@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水的净化练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 样式保持不变 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f8ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 100, 200, 0.2);
+            overflow: hidden;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0f0ff;
+            position: relative;
+        }
+        
+        .header h1 {
+            color: #0066cc;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            color: #6699cc;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .water-icon {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            color: #66ccff;
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+            background: #f9fcff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 120, 215, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .question-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 120, 215, 0.15);
+        }
+        
+        .question-title {
+            font-size: 1.3rem;
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .question-number {
+            background: #0066cc;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+        
+        .question-image {
+            /* 修改：所有图片缩小到二分之一大小 */
+            width: 50%;
+            height: auto;
+            margin: 15px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #e0f0ff;
+        }
+        
+        /* 新增：小图容器样式 */
+        .small-image-container {
+            width: 50%;
+            margin: 15px auto;
+            text-align: center;
+        }
+        
+        .small-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #e0f0ff;
+        }
+        
+        .image-placeholder {
+            background: #e6f7ff;
+            border-radius: 10px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #66aaff;
+            font-weight: bold;
+            margin: 20px 0;
+            border: 2px dashed #b3d9ff;
+        }
+        
+        .options {
+            margin-top: 20px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e0f0ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background: #e6f7ff;
+            border-color: #66ccff;
+        }
+        
+        .option.selected {
+            background: #d1ecff;
+            border-color: #0066cc;
+        }
+        
+        .option input {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .fill-blanks {
+            margin-top: 20px;
+        }
+        
+        .blank-item {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .blank-item span {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .blank-item input {
+            padding: 10px 15px;
+            border: 2px solid #b3d9ff;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 200px;
+            transition: border-color 0.3s;
+        }
+        
+        .blank-item input:focus {
+            border-color: #0066cc;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 15px;
+            background: linear-gradient(to right, #0066cc, #0099ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.5);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e6ffed 0%, #f0fff4 100%);
+            border: 2px solid #52c41a;
+        }
+        
+        .failure {
+            background: linear-gradient(135deg, #fff2e6 0%, #fff7f0 100%);
+            border: 2px solid #ffa940;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #0066cc;
+        }
+        
+        .success .result-title {
+            color: #52c41a;
+        }
+        
+        .result-message {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+        
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+            animation: firework 1.5s ease-out;
+        }
+        
+        @keyframes firework {
+            0% { transform: translateY(0) scale(0); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(3); opacity: 0; }
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e6f7ff;
+            border-radius: 4px;
+            margin: 30px 0 15px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #0066cc, #00ccff);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            color: #6699cc;
+            font-size: 0.9rem;
+        }
+        
+        .mode-indicator {
+            background: #e6f7ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #0066cc;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .mode-indicator i {
+            margin-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #88aacc;
+            font-size: 0.9rem;
+            padding-top: 15px;
+            border-top: 1px solid #e0f0ff;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .question-container {
+                padding: 20px;
+            }
+            
+            .question-title {
+                font-size: 1.1rem;
+            }
+            
+            .question-image {
+                /* 在移动端保持全宽 */
+                width: 100%;
+            }
+            
+            .small-image-container {
+                width: 100%;
+            }
+            
+            .blank-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .blank-item input {
+                width: 100%;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-tint water-icon"></i>
+            <h1>水的净化练习</h1>
+            <p>完成以下题目测试您对水净化知识的掌握程度。请仔细阅读题目并选择正确答案。</p>
+            <div class="mode-indicator">
+                <i class="fas fa-star"></i> 当前模式：必做题（3道）
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-text">完成进度: <span id="progressText">0%</span></div>
+        
+        <div id="questionsContainer">
+            <!-- 三道必做题将在这里动态生成 -->
+            <div class="question-container">
+                <div class="question-title">
+                    <div class="question-number">1</div>
+                    <div>（双选）某同学模拟自来水厂将河水净化，主要流程如下图一所示，下列说法不正确的是（ ）</div>
+                </div>
+                <div class="small-image-container">
+                    <img src="https://www.freeimg.cn/uploads/259/f8a0ad54122159b7fe8499ceb9dde5b3.png" alt="水的净化流程图">
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="checkbox" name="q1" value="A">
+                        <span>A．步骤①②可除去所有杂质</span>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" name="q1" value="B">
+                        <span>B．步骤③X试剂常用活性炭</span>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" name="q1" value="C">
+                        <span>C．步骤④应通入氯气杀菌消毒</span>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" name="q1" value="D">
+                        <span>D．净化后的水是纯水</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-title">
+                    <div class="question-number">2</div>
+                    <div>水是生命之源。项目式学习小组制作的简易净水器如图所示。下列有关该简易净水器的说法正确的是（ ）</div>
+                </div>
+                <div class="small-image-container">
+                    <img src="https://www.freeimg.cn/uploads/259/9176b44867188c294d01a0d87d710b14.jpg" alt="简易净水器示意图">
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" name="q2" value="A">
+                        <span>A. 能对水进行杀菌消毒</span>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q2" value="B">
+                        <span>B. 能除去水中的颜色和异味</span>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q2" value="C">
+                        <span>C. 能除尽水中的可溶性杂质</span>
+                    </div>
+                    <div class="option">
+                        <input type="radio" name="q2" value="D">
+                        <span>D. 能将硬水软化</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-title">
+                    <div class="question-number">3</div>
+                    <div>培养学生的科学探究能力是新课程改革的重要理念。某学校课外兴趣小组的同学取某河的水样，利用如图二所示的实验过程对该水样进行了净化处理。请你参与，完成下列问题：</div>
+                </div>
+                <div class="small-image-container">
+                    <img src="https://www.freeimg.cn/uploads/259/0c14cb2770451529fe48d5ac193f97fc.png" alt="水净化实验过程图">
+                </div>
+                <div class="fill-blanks">
+                    <div class="blank-item">
+                        <span>(1)操作①的名称是</span>
+                        <input type="text" class="blank-input" data-index="0">
+                    </div>
+                    <div class="blank-item">
+                        <span>该操作需要用到的仪器和用品有带铁圈的铁架台、玻璃棒、烧杯、滤纸和漏斗，其中玻璃棒的作用是</span>
+                        <input type="text" class="blank-input" data-index="1">
+                    </div>
+                    <div class="blank-item">
+                        <span>(2)如果经过操作①后，所得水样依然浑浊，可能的原因有________(填字母序号)；</span>
+                        <input type="text" class="blank-input" data-index="2" placeholder=" ">
+                    A．漏斗内的滤纸有破损,
+                    B．漏斗下端未靠在烧杯内壁,
+                    C．漏斗内液面高于滤纸的边缘,
+                    D．滤纸未紧贴漏斗内壁，中间留有气泡
+                    </div>
+                    <div class="blank-item">
+                        <span>(3)活性炭可以除去水样1中的一些异味和色素，主要是活性炭具有较强的</span>
+                        <input type="text" class="blank-input" data-index="3">
+                    </div>
+                    <div class="blank-item">
+                        <span>(4)根据净化过程，净化程度最高的是</span>
+                        <input type="text" class="blank-input" data-index="4" placeholder="水样X">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="submit-btn" id="submitBtn">提交答案</button>
+        
+        <div class="result-container" id="resultContainer">
+            <h2 class="result-title">恭喜！</h2>
+            <p class="result-message">您已成功完成所有必做题，答案全部正确！接下来将进入补充题阶段。</p>
+            <button class="submit-btn" id="continueBtn">继续挑战</button>
+        </div>
+    </div>
+    
+    <div class="fireworks-container" id="fireworksContainer"></div>
+
+    <script>
+        // 题目数据
+        const requiredQuestions = [
+            {
+                id: 1,
+                type: 'multiple',
+                question: '（双选）某同学模拟自来水厂将河水净化，主要流程如下图一所示，下列说法不正确的是（ ）',
+                options: [
+                    'A．步骤①②可除去所有杂质',
+                    'B．步骤③X试剂常用活性炭',
+                    'C．步骤④应通入氯气杀菌消毒',
+                    'D．净化后的水是纯水'
+                ],
+                answer: ['A', 'D']
+            },
+            {
+                id: 2,
+                type: 'single',
+                question: '水是生命之源。项目式学习小组制作的简易净水器如图所示。下列有关该简易净水器的说法正确的是（ ）',
+                options: [
+                    'A. 能对水进行杀菌消毒',
+                    'B. 能除去水中的颜色和异味',
+                    'C. 能除尽水中的可溶性杂质',
+                    'D. 能将硬水软化'
+                ],
+                answer: 'B'
+            },
+            {
+                id: 3,
+                type: 'fill',
+                question: '培养学生的科学探究能力是新课程改革的重要理念。某学校课外兴趣小组的同学取某河的水样，利用如图二所示的实验过程对该水样进行了净化处理。请你参与，完成下列问题：',
+                parts: [
+                    { text: '(1)操作①的名称是', answer: '过滤' },
+                    { text: '该操作需要用到的仪器和用品有带铁圈的铁架台、玻璃棒、烧杯、滤纸和漏斗，其中玻璃棒的作用是', answer: '引流' },
+                    { text: '(2)如果经过操作①后，所得水样依然浑浊，可能的原因有________(填字母序号)；', answer: ['A', 'C'] },
+                    { text: '(3)活性炭可以除去水样1中的一些异味和色素，主要是活性炭具有较强的', answer: '吸附' },
+                    { text: '(4)根据净化过程，净化程度最高的是', answer: '水样4' }
+                ]
+            }
+        ];
+        
+        const extraQuestions = [
+            {
+                id: 1,
+                type: 'single',
+                question: '下列有关水的说法正确的是（ ）',
+                options: [
+                    'A. 加入明矾可使水中悬浮的杂质沉降',
+                    'B. 水蒸气变成液态水，分子间间隔增大',
+                    'C. 净水器中的活性炭可以吸附水中的所有杂质',
+                    'D. 自来水厂净水过程中只有物理变化没有化学变化'
+                ],
+                answer: 'A',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg'
+            },
+            {
+                id: 2,
+                type: 'single',
+                question: '水是一种宝贵的自然资源。下列净化水的操作中，净化程度最高的是（ ）',
+                options: [
+                    'A. 沉淀',
+                    'B. 吸附',
+                    'C. 消毒',
+                    'D. 蒸馏'
+                ],
+                answer: 'D',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg'
+            },
+            {
+                id: 3,
+                type: 'single',
+                question: '过滤操作的下列步骤中错误的是（ ）',
+                options: [
+                    'A. 取一张圆形滤纸,对折两次,打开成圆锥形,放入漏斗',
+                    'B. 如果滤纸高于漏斗边缘,用剪刀剪去多余部分,使滤纸的边缘比漏斗口稍低',
+                    'C. 用少量水润湿滤纸,使滤纸紧贴漏斗,滤纸层与漏斗壁间不留气泡',
+                    'D. 用玻璃棒轻轻搅动漏斗中液体,以加快过滤'
+                ],
+                answer: 'D',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg'
+            },
+            {
+                id: 4,
+                type: 'single',
+                question: '某同学利用蒸馏的原理设计野外饮用水简易净化装置(如图三),对非饮用水经阳光曝晒后进行净化。下列说法正确的是（ ）',
+                options: [
+                    'A. 水蒸气在塑料膜冷凝时水分子的间隔变大',
+                    'B. 水蒸气在上层的塑料膜冷凝成液态水',
+                    'C. 一次性水杯中收集到的液态水是混合物',
+                    'D. 该净化过程与自来水生产过程原理相同'
+                ],
+                answer: 'B',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/5843e10d026d4ad587780a9ee2f87719.jpg'
+            },
+            {
+                id: 5,
+                type: 'single',
+                question: '河水净化的主要步骤如下图四所示。有关说法错误的是（ ）',
+                options: [
+                    'A. 步骤Ⅰ可除去难溶性杂质',
+                    'B. X试剂可以是活性炭',
+                    'C. 步骤Ⅲ可杀菌、消毒',
+                    'D. 步骤Ⅱ发生化学变化'
+                ],
+                answer: 'D',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/7191bd77e1c70bc2d96d62c25d7b2b33.png'
+            },
+            {
+                id: 6,
+                type: 'single',
+                question: '下列对温泉水的说法中错误的是（ ）',
+                options: [
+                    'A. 清澈的温泉水是混合物',
+                    'B. 活性炭可用于净化温泉水',
+                    'C. 检验温泉水是硬水还是软水可用肥皂水',
+                    'D. 过滤可以除去温泉水中的可溶性杂质'
+                ],
+                answer: 'D',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg'
+            },
+            {
+                id: 7,
+                type: 'single',
+                question: '硬水和软水的本质区别是（ ）',
+                options: [
+                    'A. 硬水浑浊,软水澄清',
+                    'B. 硬水含杂质多,软水含杂质少',
+                    'C. 硬水不是纯净物,软水是纯净物',
+                    'D. 硬水中含有较多的可溶性钙、镁化合物,软水中不含或含少量的可溶性钙、镁化合物'
+                ],
+                answer: 'D',
+                imageUrl: 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg'
+            },
+            {
+                id: 8,
+                type: 'fill',
+                question: '自来水大多是各地的地表水生产的，某兴趣小组在实验室模拟水厂将浑浊的江水或河水净化成自来水，并最终制成蒸馏水。实验流程如下图五：',
+                parts: [
+                    { text: '(1)操作①的名称是', answer: '过滤' },
+                    { text: '使用的玻璃仪器有烧杯、漏斗、', answer: '玻璃棒' },
+                    { text: '若经过操作①后，所得液体C中仍有浑浊，其原因可能是（填写字母）', answer: ['a', 'd'] },
+                    { text: '(2)如图六所示装置进行操作②，利用活性炭的', answer: '吸附' },
+                    { text: '性除去一些异味和色素，待净化的水应该从（填字母）端通入', answer: 'b' }
+                ],
+                imageUrl: 'https://www.freeimg.cn/uploads/259/ea78ceebb602ab569f3611f288be17c7.png',
+                // 图六的URL
+                imageUrl2: 'https://www.freeimg.cn/uploads/259/c563926f9f3f978a334b31b857583d11.png'
+            }
+        ];
+        
+        // DOM元素
+        const questionsContainer = document.getElementById('questionsContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const continueBtn = document.getElementById('continueBtn');
+        const fireworksContainer = document.getElementById('fireworksContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        // 状态变量
+        let currentMode = 'required'; // 'required' 或 'extra'
+        let currentExtraQuestions = []; // 当前显示的补充题
+        let progress = 0;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress(0);
+            
+            submitBtn.addEventListener('click', checkAnswers);
+            continueBtn.addEventListener('click', loadExtraQuestions);
+        });
+        
+        // 更新进度条
+        function updateProgress(value) {
+            progress = value;
+            progressBar.style.width = `${value}%`;
+            progressText.textContent = `${value}%`;
+        }
+        
+        // 检查答案
+        function checkAnswers() {
+            let allCorrect = true;
+            
+            if (currentMode === 'required') {
+                // 检查第一题（双选）
+                const q1Options = document.querySelectorAll('input[name="q1"]:checked');
+                const selectedQ1 = Array.from(q1Options).map(opt => opt.value);
+                
+                if (selectedQ1.length !== 2 || 
+                    !selectedQ1.includes('A') || 
+                    !selectedQ1.includes('D')) {
+                    allCorrect = false;
+                    highlightIncorrect(document.querySelectorAll('.question-container')[0]);
+                } else {
+                    highlightCorrect(document.querySelectorAll('.question-container')[0]);
+                }
+                
+                // 检查第二题（单选）
+                const q2Selected = document.querySelector('input[name="q2"]:checked');
+                if (!q2Selected || q2Selected.value !== 'B') {
+                    allCorrect = false;
+                    highlightIncorrect(document.querySelectorAll('.question-container')[1]);
+                } else {
+                    highlightCorrect(document.querySelectorAll('.question-container')[1]);
+                }
+                
+                // 检查第三题（填空）
+                const blankInputs = document.querySelectorAll('.blank-input');
+                const answers = ['过滤', '引流', 'AC', '吸附', '水样4'];
+                
+                blankInputs.forEach((input, index) => {
+                    const userAnswer = input.value.trim();
+                    let correct = false;
+                    
+                    if (index === 2) {
+                        // 处理多选题答案（不分顺序）
+                        const userAnswers = userAnswer.toUpperCase().split('').sort().join('');
+                        correct = userAnswers === 'AC';
+                    } else {
+                        correct = userAnswer === answers[index];
+                    }
+                    
+                    if (!correct) {
+                        allCorrect = false;
+                        input.style.borderColor = '#ff4d4f';
+                    } else {
+                        input.style.borderColor = '#52c41a';
+                    }
+                });
+                
+                if (allCorrect) {
+                    showResult(true, '恭喜！您已成功完成所有必做题，答案全部正确！');
+                    createFireworks();
+                    updateProgress(100);
+                } else {
+                    showResult(false, '部分答案不正确，将重新抽取题目...');
+                    setTimeout(loadRandomExtraQuestions, 1500);
+                    updateProgress(33);
+                }
+            } else {
+                // 检查补充题
+                let extraAllCorrect = true;
+                const questionContainers = document.querySelectorAll('.question-container');
+                
+                currentExtraQuestions.forEach((q, qIndex) => {
+                    const container = questionContainers[qIndex];
+                    let correct = false;
+                    
+                    if (q.type === 'single') {
+                        const selected = container.querySelector(`input[name="extra${q.id}"]:checked`);
+                        if (selected && selected.value === q.answer.charAt(0)) {
+                            correct = true;
+                        } else {
+                            extraAllCorrect = false;
+                        }
+                    } else if (q.type === 'fill') {
+                        const inputs = container.querySelectorAll('.blank-input');
+                        q.parts.forEach((part, partIndex) => {
+                            const userAnswer = inputs[partIndex].value.trim();
+                            let partCorrect = false;
+                            
+                            if (Array.isArray(part.answer)) {
+                                // 多选题答案（按字母排序比较）
+                                const userAnswers = userAnswer.toUpperCase().split('').sort().join('');
+                                const correctAnswer = part.answer.sort().join('');
+                                partCorrect = userAnswers === correctAnswer;
+                            } else {
+                                partCorrect = userAnswer === part.answer;
+                            }
+                            
+                            if (!partCorrect) {
+                                extraAllCorrect = false;
+                                inputs[partIndex].style.borderColor = '#ff4d4f';
+                            } else {
+                                inputs[partIndex].style.borderColor = '#52c41a';
+                            }
+                        });
+                    }
+                    
+                    // 高亮题目
+                    if (correct) {
+                        highlightCorrect(container);
+                    } else if (q.type !== 'fill') {
+                        highlightIncorrect(container);
+                    }
+                });
+                
+                if (extraAllCorrect) {
+                    showResult(true, '恭喜！您已成功完成所有题目！');
+                    createFireworks();
+                    updateProgress(100);
+                    continueBtn.textContent = '返回首页';
+                    continueBtn.onclick = resetApp;
+                } else {
+                    showResult(false, '部分答案不正确，将重新抽取题目...');
+                    setTimeout(loadRandomExtraQuestions, 1500);
+                }
+            }
+        }
+        
+        // 高亮显示正确答案
+        function highlightCorrect(container) {
+            container.style.boxShadow = '0 0 0 3px rgba(82, 196, 26, 0.3)';
+            setTimeout(() => {
+                container.style.boxShadow = '0 4px 15px rgba(0, 120, 215, 0.1)';
+            }, 1000);
+        }
+        
+        // 高亮显示错误答案
+        function highlightIncorrect(container) {
+            container.style.boxShadow = '0 0 0 3px rgba(255, 77, 79, 0.3)';
+            setTimeout(() => {
+                container.style.boxShadow = '0 4px 15px rgba(0, 120, 215, 0.1)';
+            }, 1000);
+        }
+        
+        // 显示结果
+        function showResult(isSuccess, message) {
+            resultContainer.className = 'result-container ' + (isSuccess ? 'success' : 'failure');
+            resultContainer.querySelector('.result-title').textContent = isSuccess ? '恭喜！' : '请再试一次';
+            resultContainer.querySelector('.result-message').textContent = message;
+            
+            if (currentMode === 'required' && isSuccess) {
+                resultContainer.querySelector('.result-message').textContent = '恭喜！您已成功完成所有必做题，答案全部正确！';
+                continueBtn.style.display = 'block';
+            } else if (currentMode === 'extra' && isSuccess) {
+                resultContainer.querySelector('.result-message').textContent = '恭喜！您已成功完成所有题目！';
+                continueBtn.textContent = '返回首页';
+                continueBtn.onclick = resetApp;
+                continueBtn.style.display = 'block';
+            } else {
+                continueBtn.style.display = 'none';
+            }
+            
+            resultContainer.style.display = 'block';
+        }
+        
+        // 加载随机补充题
+        function loadRandomExtraQuestions() {
+            currentMode = 'extra';
+            document.querySelector('.mode-indicator').innerHTML = '<i class="fas fa-redo"></i> 当前模式：补充题（2道）';
+            
+            // 清空现有题目
+            questionsContainer.innerHTML = '';
+            
+            // 随机选择2道不同的补充题
+            currentExtraQuestions = getRandomExtraQuestions(2);
+            
+            // 生成新题目
+            currentExtraQuestions.forEach((q, index) => {
+                const questionEl = document.createElement('div');
+                questionEl.className = 'question-container';
+                
+                // 使用题目自带的图片URL或默认图片
+                const imageUrl = q.imageUrl || 'https://www.freeimg.cn/uploads/259/2277f06833bfa17ce4fb2b896e4619c6.jpg';
+                
+                // 生成题目标题
+                questionEl.innerHTML = `
+                    <div class="question-title">
+                        <div class="question-number">${index + 1}</div>
+                        <div>${q.question}</div>
+                    </div>
+                    <div class="small-image-container">
+                        <img src="${imageUrl}" alt="相关示意图">
+                    </div>
+                `;
+                
+                if (q.type === 'single') {
+                    const optionsEl = document.createElement('div');
+                    optionsEl.className = 'options';
+                    
+                    q.options.forEach(opt => {
+                        optionsEl.innerHTML += `
+                            <div class="option">
+                                <input type="radio" name="extra${q.id}" value="${opt.charAt(0)}">
+                                <span>${opt}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    questionEl.appendChild(optionsEl);
+                } else if (q.type === 'fill') {
+                    const blanksEl = document.createElement('div');
+                    blanksEl.className = 'fill-blanks';
+                    
+                    q.parts.forEach((part, i) => {
+                        blanksEl.innerHTML += `
+                            <div class="blank-item">
+                                <span>${part.text}</span>
+                                <input type="text" class="blank-input" data-index="${i}">
+                            </div>
+                        `;
+                        
+                        // 如果是第8题的第4个填空，在它后面添加图六
+                        if (q.id === 8 && i === 3 && q.imageUrl2) {
+                            blanksEl.innerHTML += `
+                                <div class="small-image-container" style="margin-top: 10px;">
+                                    <img src="${q.imageUrl2}" alt="图六：活性炭吸附装置">
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    questionEl.appendChild(blanksEl);
+                }
+                
+                questionsContainer.appendChild(questionEl);
+            });
+            
+            resultContainer.style.display = 'none';
+            submitBtn.textContent = '提交补充题答案';
+            updateProgress(50);
+        }
+        
+        // 加载补充题（正常进入）
+        function loadExtraQuestions() {
+            loadRandomExtraQuestions();
+        }
+        
+        // 随机获取补充题
+        function getRandomExtraQuestions(count) {
+            const shuffled = [...extraQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        // 创建礼花效果
+        function createFireworks() {
+            fireworksContainer.style.display = 'block';
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    
+                    // 随机位置
+                    const left = Math.random() * 100;
+                    const top = 70 + Math.random() * 20;
+                    firework.style.left = `${left}%`;
+                    firework.style.top = `${top}%`;
+                    
+                    // 随机颜色
+                    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.background = color;
+                    firework.style.boxShadow = `0 0 10px ${color}`;
+                    
+                    fireworksContainer.appendChild(firework);
+                    
+                    // 移除元素
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 1500);
+                }, i * 50);
+            }
+            
+            // 5秒后隐藏
+            setTimeout(() => {
+                fireworksContainer.style.display = 'none';
+                fireworksContainer.innerHTML = '';
+            }, 5000);
+        }
+        
+        // 重置应用
+        function resetApp() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>

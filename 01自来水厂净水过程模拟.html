@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自来水厂净水过程模拟 - 初中化学</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffcc00, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            max-width: 900px;
+            line-height: 1.6;
+            color: #e0f7fa;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .animation-container {
+            flex: 3;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        canvas {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 10px;
+            width: 100%;
+            height: 450px;
+            display: block;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-align: center;
+        }
+        
+        .step {
+            background: rgba(0, 60, 120, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .step:hover {
+            background: rgba(0, 100, 200, 0.7);
+        }
+        
+        .step.active {
+            background: rgba(0, 100, 200, 0.9);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: #4fc3f7;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step h3 i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .step p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #e0f7fa;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 15px;
+            border-radius: 50px;
+            color: white;
+        }
+        
+        .chemical-formulas {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 40, 80, 0.6);
+            border-radius: 10px;
+        }
+        
+        .chemical-formulas h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+        
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 12px 0;
+            color: #a5d6a7;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            font-size: 0.95rem;
+            text-align: center;
+            font-style: italic;
+            color: #e0f7fa;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            color: #bbdefb;
+            font-size: 0.9rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.0rem;
+            }
+            
+            .subtitle {
+                font-size: 1.0rem;
+            }
+            
+            canvas {
+                height: 350px;
+            }
+            
+            .step h3 {
+                font-size: 1.1rem;
+            }
+            
+            .container {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            canvas {
+                height: 300px;
+            }
+            
+            .step h3 {
+                font-size: 1.0rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        .process-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .step-label {
+            font-size: 0.8rem;
+            text-align: center;
+            color: #e0f7fa;
+            font-weight: 500;
+        }
+        
+        .process-line {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: linear-gradient(to right, #2196F3, #21CBF3);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-faucet"></i> 自来水厂净水过程模拟</h1>
+        <p class="subtitle">本动画基于初中化学知识，展示自来水从原水到清洁水的处理过程，包含沉淀、过滤、吸附、消毒等关键步骤。</p>
+        
+        <div class="process-bar">
+            <div class="process-line"></div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-water"></i></div>
+                <div class="step-label">取水</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="step-label">沉淀</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-filter"></i></div>
+                <div class="step-label">过滤</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-magnet"></i></div>
+                <div class="step-label">吸附</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-vial"></i></div>
+                <div class="step-label">消毒</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon"><i class="fas fa-tint"></i></div>
+                <div class="step-label">出水</div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="animation-container">
+            <canvas id="waterPlantCanvas"></canvas>
+            <div class="controls">
+                <button id="startBtn"><i class="fas fa-play"></i> 开始动画</button>
+                <button id="pauseBtn"><i class="fas fa-pause"></i> 暂停</button>
+                <button id="resetBtn"><i class="fas fa-redo"></i> 重置</button>
+                <div class="speed-control">
+                    <label for="speed"><i class="fas fa-tachometer-alt"></i> 速度:</label>
+                    <input type="range" id="speed" min="1" max="10" value="5">
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2><i class="fas fa-info-circle"></i> 净水步骤说明</h2>
+            <div class="step active" id="step1">
+                <h3><i class="fas fa-water"></i> 1. 取水</h3>
+                <p>从水源（河流、湖泊）抽取原水，原水中含有泥沙、悬浮物、有机物和微生物等杂质。</p>
+            </div>
+            <div class="step" id="step2">
+                <h3><i class="fas fa-layer-group"></i> 2. 沉淀</h3>
+                <p>水流速度减慢，加入混凝剂（如明矾）使水中的悬浮杂质在重力作用下逐渐沉降到底部，使水变得清澈。</p>
+            </div>
+            <div class="step" id="step3">
+                <h3><i class="fas fa-filter"></i> 3. 过滤</h3>
+                <p>水流经砂石和活性炭层，进一步去除细小杂质、异味和有机物。活性炭能吸附水中的色素和异味物质。</p>
+            </div>
+            <div class="step" id="step4">
+                <h3><i class="fas fa-magnet"></i> 4. 吸附</h3>
+                <p>使用特殊吸附材料（如活性炭、分子筛）进一步去除水中溶解的有机物、重金属离子和色素，使水更纯净透明。</p>
+            </div>
+            <div class="step" id="step5">
+                <h3><i class="fas fa-vial"></i> 5. 消毒</h3>
+                <p>加入消毒剂（次氯酸钠或臭氧），杀灭水中的细菌和病毒，确保水质安全。</p>
+            </div>
+            <div class="step" id="step6">
+                <h3><i class="fas fa-tint"></i> 6. 出水</h3>
+                <p>清洁的自来水通过管道输送到千家万户，可直接饮用。</p>
+            </div>
+            
+            <div class="chemical-formulas">
+                <h3><i class="fas fa-flask"></i> 关键化学反应</h3>
+                <div class="formula">消毒物质</div>
+                <div class="formula">活性炭吸附：C + 杂质 → C-杂质</div>
+                <div class="formula">次氯酸钠杀菌：NaClO + H₂O → HClO + NaOH</div>
+                <div class="formula">次氯酸杀菌：HClO → H⁺ + ClO⁻</div>
+                <p class="explanation">次氯酸（HClO）具有强氧化性，能穿透微生物细胞壁杀灭病原体</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 峨眉山市第四中学 | 初中化学水的净化教学智能体 | 水净化过程的物理和化学原理演示</p>
+    </div>
+
+    <script>
+        // 获取Canvas元素和上下文
+        const canvas = document.getElementById('waterPlantCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas尺寸
+        function setCanvasSize() {
+            const container = document.querySelector('.animation-container');
+            canvas.width = container.clientWidth - 30;
+            canvas.height = Math.min(450, window.innerHeight * 0.55);
+        }
+        
+        // 初始化Canvas尺寸
+        setCanvasSize();
+        
+        // 动画状态控制
+        let animationId = null;
+        let isPlaying = false;
+        let animationSpeed = 5;
+        let currentStep = 1;
+        
+        // 净水厂组件
+        const components = {
+            sourceWater: {
+                particles: []
+            },
+            sedimentationTank: {
+                particles: [],
+                settled: [] // 沉淀的粒子
+            },
+            filter: {
+                particles: [],
+                filtered: [] // 存储过滤效果
+            },
+            adsorptionTank: {
+                particles: [],
+                adsorbed: [] // 存储吸附效果
+            },
+            disinfectionTank: {
+                particles: [],
+                disinfected: [] // 存储已消毒的粒子
+            },
+            cleanWater: {
+                particles: []
+            }
+        };
+        
+        // 初始化粒子
+        function initParticles() {
+            // 清空所有粒子
+            for (let key in components) {
+                components[key].particles = [];
+                if (components[key].disinfected) components[key].disinfected = [];
+                if (components[key].settled) components[key].settled = [];
+                if (components[key].filtered) components[key].filtered = [];
+                if (components[key].adsorbed) components[key].adsorbed = [];
+            }
+            
+            // 创建原水粒子
+            for (let i = 0; i < 120; i++) {
+                components.sourceWater.particles.push({
+                    x: Math.random() * canvas.width * 0.15,
+                    y: 50 + Math.random() * (canvas.height - 100),
+                    size: 2 + Math.random() * 3,
+                    speed: 0.5 + Math.random() * 1.5,
+                    type: Math.random() > 0.7 ? 'bacteria' : 'water',
+                    color: Math.random() > 0.8 ? 'rgba(255, 165, 0, 0.8)' : 'rgba(33, 150, 243, 0.8)',
+                    isColored: Math.random() > 0.9
+                });
+            }
+        }
+        
+        // 绘制净水厂
+        function drawWaterPlant() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景
+            drawBackground();
+            
+            // 绘制各个处理单元
+            drawSourceWater();
+            drawSedimentationTank();
+            drawFilter();
+            drawAdsorptionTank();
+            drawDisinfectionTank();
+            drawCleanWater();
+            
+            // 绘制标题
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText('自来水厂净水过程', canvas.width/2 - 110, 25);
+        }
+        
+        function drawBackground() {
+            // 绘制地面
+            ctx.fillStyle = '#5d4037';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+            
+            // 绘制天空
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#1a237e');
+            gradient.addColorStop(1, '#4fc3f7');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height - 20);
+        }
+        
+        function drawSourceWater() {
+            const x = canvas.width * 0.05;
+            const y = 50;
+            const width = canvas.width * 0.15;
+            const height = canvas.height - 100;
+            
+            // 绘制水源容器
+            ctx.fillStyle = 'rgba(33, 150, 243, 0.2)';
+            ctx.strokeStyle = '#2196F3';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制水源标签
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = '14px Arial';
+            ctx.fillText('水源', x + width/2 - 15, y - 10);
+            
+            // 绘制水泵
+            ctx.fillStyle = '#78909C';
+            ctx.beginPath();
+            ctx.arc(x + width + 15, y + height/2, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制管道
+            ctx.strokeStyle = '#78909C';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(x + width, y + height/2);
+            ctx.lineTo(x + width + 25, y + height/2);
+            ctx.stroke();
+        }
+        
+        function drawSedimentationTank() {
+            const x = canvas.width * 0.22;
+            const y = 50;
+            const width = canvas.width * 0.15;
+            const height = canvas.height - 100;
+            
+            // 绘制沉淀池
+            ctx.fillStyle = 'rgba(33, 150, 243, 0.4)';
+            ctx.strokeStyle = '#2196F3';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制沉淀物
+            ctx.fillStyle = 'rgba(121, 85, 72, 0.7)';
+            ctx.beginPath();
+            ctx.moveTo(x, y + height);
+            ctx.lineTo(x, y + height - 30);
+            ctx.lineTo(x + width, y + height - 15);
+            ctx.lineTo(x + width, y + height);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制标签
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = '14px Arial';
+            ctx.fillText('沉淀池', x + width/2 - 20, y - 10);
+        }
+        
+        function drawFilter() {
+            const x = canvas.width * 0.39;
+            const y = 50;
+            const width = canvas.width * 0.15;
+            const height = canvas.height - 100;
+            
+            // 绘制过滤池
+            ctx.fillStyle = 'rgba(33, 150, 243, 0.5)';
+            ctx.strokeStyle = '#2196F3';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制过滤层
+            const layers = [
+                {color: '#8D6E63', height: 15, label: '细砂'},
+                {color: '#A1887F', height: 15, label: '粗砂'},
+                {color: '#BCAAA4', height: 15, label: '砾石'},
+                {color: '#3E2723', height: 25, label: '活性炭'}
+            ];
+            
+            let currentY = y + height;
+            layers.forEach(layer => {
+                currentY -= layer.height;
+                ctx.fillStyle = layer.color;
+                ctx.fillRect(x, currentY, width, layer.height);
+                
+                ctx.fillStyle = '#FFF';
+                ctx.font = '10px Arial';
+                ctx.fillText(layer.label, x + 8, currentY + 12);
+            });
+            
+            // 绘制标签
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = '14px Arial';
+            ctx.fillText('过滤池', x + width/2 - 20, y - 10);
+        }
+        
+        function drawAdsorptionTank() {
+            const x = canvas.width * 0.56;
+            const y = 50;
+            const width = canvas.width * 0.15;
+            const height = canvas.height - 100;
+            
+            // 绘制吸附池
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.4)';
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制吸附材料层
+            const layers = [
+                {color: '#5D4037', height: 25, label: '分子筛'},
+                {color: '#795548', height: 20, label: '活性炭'}
+            ];
+            
+            let currentY = y + height;
+            layers.forEach(layer => {
+                currentY -= layer.height;
+                ctx.fillStyle = layer.color;
+                ctx.fillRect(x, currentY, width, layer.height);
+                
+                ctx.fillStyle = '#FFF';
+                ctx.font = '10px Arial';
+                ctx.fillText(layer.label, x + 8, currentY + 12);
+            });
+            
+            // 绘制标签
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = '14px Arial';
+            ctx.fillText('吸附池', x + width/2 - 20, y - 10);
+        }
+        
+        function drawDisinfectionTank() {
+            const x = canvas.width * 0.73;
+            const y = 50;
+            const width = canvas.width * 0.15;
+            const height = canvas.height - 100;
+            
+            // 绘制消毒池
+            ctx.fillStyle = 'rgba(255, 152, 0, 0.3)';
+            ctx.strokeStyle = '#FF9800';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制消毒剂添加装置
+            ctx.fillStyle = '#F44336';
+            ctx.beginPath();
+            ctx.moveTo(x + width/2, y - 20);
+            ctx.lineTo(x + width/2 - 12, y - 35);
+            ctx.lineTo(x + width/2 + 12, y - 35);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制加药管道
+            ctx.strokeStyle = '#F44336';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x + width/2, y - 20);
+            ctx.lineTo(x + width/2, y + 15);
+            ctx.stroke();
+            
+            // 绘制标签（放在顶部）
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('消毒池', x + width/2 - 20, y - 45);
+        }
+        
+        function drawCleanWater() {
+            const x = canvas.width * 0.90;
+            const y = 50;
+            const width = canvas.width * 0.08;
+            const height = canvas.height - 100;
+            
+            // 绘制出水口
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.6)';
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, 5);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 绘制出水管道
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(x, y + height/2);
+            ctx.lineTo(x - 25, y + height/2);
+            ctx.stroke();
+            
+            // 绘制标签
+            ctx.fillStyle = '#E1F5FE';
+            ctx.font = '14px Arial';
+            ctx.fillText('清洁水', x - 30, y - 10);
+        }
+        
+        // 更新粒子状态
+        function updateParticles() {
+            // 更新原水粒子
+            components.sourceWater.particles.forEach((particle, index) => {
+                particle.x += particle.speed * (animationSpeed / 5);
+                
+                // 粒子移动到沉淀池
+                if (particle.x > canvas.width * 0.22) {
+                    components.sedimentationTank.particles.push({
+                        ...particle,
+                        x: canvas.width * 0.22 + Math.random() * 10
+                    });
+                    components.sourceWater.particles.splice(index, 1);
+                }
+            });
+            
+            // 更新沉淀池粒子
+            components.sedimentationTank.particles.forEach((particle, index) => {
+                particle.x += particle.speed * (animationSpeed / 8);
+                particle.y += (Math.random() - 0.5) * 1.5;
+                
+                // 大颗粒沉淀
+                if (particle.size > 3 && Math.random() < 0.05) {
+                    components.sedimentationTank.settled.push({
+                        x: particle.x,
+                        y: canvas.height - 30 - Math.random() * 10,
+                        size: particle.size
+                    });
+                    components.sedimentationTank.particles.splice(index, 1);
+                    return;
+                }
+                
+                // 移动到过滤池
+                if (particle.x > canvas.width * 0.39) {
+                    components.filter.particles.push({
+                        ...particle,
+                        x: canvas.width * 0.39 + Math.random() * 10
+                    });
+                    components.sedimentationTank.particles.splice(index, 1);
+                }
+            });
+            
+            // 更新过滤池粒子
+            components.filter.particles.forEach((particle, index) => {
+                particle.x += particle.speed * (animationSpeed / 12);
+                
+                // 过滤效果（吸附）
+                if (Math.random() < 0.08) {
+                    // 模拟吸附效果
+                    components.filter.filtered.push({
+                        x: particle.x,
+                        y: particle.y,
+                        size: particle.size,
+                        opacity: 1.0
+                    });
+                    
+                    // 杂质被过滤掉
+                    if (particle.type === 'bacteria' || particle.isColored) {
+                        components.filter.particles.splice(index, 1);
+                        return;
+                    }
+                }
+                
+                // 移动到吸附池
+                if (particle.x > canvas.width * 0.56) {
+                    components.adsorptionTank.particles.push({
+                        ...particle,
+                        x: canvas.width * 0.56 + Math.random() * 10
+                    });
+                    components.filter.particles.splice(index, 1);
+                }
+            });
+            
+            // 更新过滤效果
+            components.filter.filtered.forEach((effect, index) => {
+                effect.opacity -= 0.02;
+                if (effect.opacity <= 0) {
+                    components.filter.filtered.splice(index, 1);
+                }
+            });
+            
+            // 更新吸附池粒子
+            components.adsorptionTank.particles.forEach((particle, index) => {
+                particle.x += particle.speed * (animationSpeed / 15);
+                
+                // 脱色吸附效果
+                if (particle.isColored && Math.random() < 0.1) {
+                    components.adsorptionTank.adsorbed.push({
+                        x: particle.x,
+                        y: particle.y,
+                        size: particle.size,
+                        opacity: 1.0
+                    });
+                    particle.isColored = false;
+                    particle.color = 'rgba(33, 150, 243, 0.8)';
+                }
+                
+                // 移动到消毒池
+                if (particle.x > canvas.width * 0.73) {
+                    components.disinfectionTank.particles.push({
+                        ...particle,
+                        x: canvas.width * 0.73 + Math.random() * 10
+                    });
+                    components.adsorptionTank.particles.splice(index, 1);
+                }
+            });
+            
+            // 更新吸附效果
+            components.adsorptionTank.adsorbed.forEach((effect, index) => {
+                effect.opacity -= 0.02;
+                if (effect.opacity <= 0) {
+                    components.adsorptionTank.adsorbed.splice(index, 1);
+                }
+            });
+            
+            // 更新消毒池粒子
+            components.disinfectionTank.particles.forEach((particle, index) => {
+                particle.x += particle.speed * (animationSpeed / 15);
+                particle.y += (Math.random() - 0.5) * 1.5;
+                
+                // 随机消毒效果
+                if (Math.random() < 0.03 && particle.type === 'bacteria') {
+                    components.disinfectionTank.disinfected.push({
+                        x: particle.x,
+                        y: particle.y,
+                        size: particle.size,
+                        opacity: 1.0
+                    });
+                    particle.type = 'disinfected'; // 标记为已消毒
+                }
+                
+                // 移动到清洁水
+                if (particle.x > canvas.width * 0.90) {
+                    components.cleanWater.particles.push({
+                        ...particle,
+                        x: canvas.width * 0.90 + Math.random() * 10
+                    });
+                    components.disinfectionTank.particles.splice(index, 1);
+                }
+            });
+            
+            // 更新消毒效果
+            components.disinfectionTank.disinfected.forEach((effect, index) => {
+                effect.opacity -= 0.02;
+                if (effect.opacity <= 0) {
+                    components.disinfectionTank.disinfected.splice(index, 1);
+                }
+            });
+            
+            // 更新清洁水粒子
+            components.cleanWater.particles.forEach(particle => {
+                particle.x += particle.speed * (animationSpeed / 20);
+                
+                // 粒子移出画面
+                if (particle.x > canvas.width + 10) {
+                    particle.x = canvas.width * 0.90;
+                }
+            });
+        }
+        
+        // 绘制粒子
+        function drawParticles() {
+            // 绘制原水粒子
+            components.sourceWater.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.05, 50, canvas.width * 0.15);
+            });
+            
+            // 绘制沉淀池粒子
+            components.sedimentationTank.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.22, 50, canvas.width * 0.15);
+            });
+            
+            // 绘制沉淀物
+            components.sedimentationTank.settled.forEach(settled => {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(121, 85, 72, 0.8)';
+                ctx.arc(settled.x, settled.y, settled.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // 绘制过滤池粒子
+            components.filter.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.39, 50, canvas.width * 0.15);
+            });
+            
+            // 绘制过滤效果（吸附）
+            components.filter.filtered.forEach(effect => {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(255, 255, 0, ${effect.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.arc(effect.x, effect.y, effect.size + 2, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            
+            // 绘制吸附池粒子
+            components.adsorptionTank.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.56, 50, canvas.width * 0.15);
+            });
+            
+            // 绘制吸附效果（脱色）
+            components.adsorptionTank.adsorbed.forEach(effect => {
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 165, 0, ${effect.opacity})`;
+                ctx.arc(effect.x, effect.y, effect.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // 绘制消毒池粒子
+            components.disinfectionTank.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.73, 50, canvas.width * 0.15);
+            });
+            
+            // 绘制消毒效果
+            components.disinfectionTank.disinfected.forEach(effect => {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(255, 255, 0, ${effect.opacity})`;
+                ctx.lineWidth = 2;
+                ctx.arc(effect.x, effect.y, effect.size + 3, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            
+            // 绘制清洁水粒子
+            components.cleanWater.particles.forEach(particle => {
+                drawParticle(particle, canvas.width * 0.90, 50, canvas.width * 0.08);
+            });
+        }
+        
+        function drawParticle(particle, areaX, areaY, areaWidth) {
+            if (particle.x < areaX || particle.x > areaX + areaWidth) return;
+            
+            ctx.beginPath();
+            if (particle.type === 'water') {
+                ctx.fillStyle = particle.color;
+            } else if (particle.type === 'bacteria') {
+                ctx.fillStyle = 'rgba(244, 67, 54, 0.8)';
+            } else { // disinfected
+                ctx.fillStyle = 'rgba(76, 175, 80, 0.8)';
+            }
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // 动画循环
+        function animate() {
+            drawWaterPlant();
+            updateParticles();
+            drawParticles();
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // 事件监听
+        document.getElementById('startBtn').addEventListener('click', () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                animate();
+            }
+        });
+        
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            if (isPlaying) {
+                isPlaying = false;
+                cancelAnimationFrame(animationId);
+            }
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            cancelAnimationFrame(animationId);
+            isPlaying = false;
+            initParticles();
+            drawWaterPlant();
+        });
+        
+        document.getElementById('speed').addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+        });
+        
+        // 步骤点击事件
+        const steps = document.querySelectorAll('.step');
+        steps.forEach(step => {
+            step.addEventListener('click', () => {
+                steps.forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+            });
+        });
+        
+        // 初始化
+        initParticles();
+        drawWaterPlant();
+        
+        // 为Canvas添加圆角矩形方法
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+        };
+        
+        // 响应窗口大小变化
+        window.addEventListener('resize', () => {
+            setCanvasSize();
+            drawWaterPlant();
+        });
+    </script>
+</body>
+</html>

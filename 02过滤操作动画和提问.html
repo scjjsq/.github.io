@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初中化学过滤操作实验</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(0, 15, 30, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #00b4ff;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #00b4ff;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #00e5ff;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #aaffff;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .lab-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #0a1929;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 3px solid #005a82;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            background: linear-gradient(to right, #0084ff, #00c6ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 132, 255, 0.4);
+            font-weight: bold;
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.6);
+            background: linear-gradient(to right, #00c6ff, #0084ff);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn:disabled {
+            background: linear-gradient(to right, #555, #888);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            padding: 10px 20px;
+            background: rgba(0, 100, 180, 0.6);
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 120px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .step:hover {
+            background: rgba(0, 150, 255, 0.7);
+        }
+        
+        .step.active {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            box-shadow: 0 0 15px rgba(0, 198, 255, 0.7);
+            transform: scale(1.05);
+        }
+        
+        .step.completed {
+            background: linear-gradient(to right, #00c6a7, #00a86b);
+        }
+        
+        .step.completed::after {
+            content: "✓";
+            margin-left: 8px;
+            font-weight: bold;
+        }
+        
+        .theory {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #00c6ff;
+            transition: all 0.3s;
+        }
+        
+        .theory.collapsed {
+            max-height: 100px;
+            overflow: hidden;
+        }
+        
+        .theory h2 {
+            color: #00e5ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #00e5ff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .theory p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .theory ul {
+            padding-left: 30px;
+            margin: 15px 0;
+        }
+        
+        .theory li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .key-point {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        
+        .equipment {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            gap: 15px;
+        }
+        
+        .equipment-item {
+            background: rgba(0, 80, 160, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            width: 150px;
+            border: 1px solid #0088ff;
+            transition: all 0.3s;
+        }
+        
+        .equipment-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 136, 255, 0.4);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #0088ff;
+            color: #aaffff;
+            font-size: 0.9rem;
+        }
+        
+        /* 答题区域样式 */
+        .question-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 30, 60, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            z-index: 100;
+            border: 3px solid #00c6ff;
+            box-shadow: 0 0 30px rgba(0, 198, 255, 0.5);
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #00c6ff;
+        }
+        
+        .question-title {
+            font-size: 1.8rem;
+            color: #00e5ff;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #ffffff;
+            background: rgba(0, 100, 180, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00c6ff;
+        }
+        
+        .hint {
+            text-align: center;
+            color: #aaffaa;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            background: rgba(0, 100, 180, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            background: rgba(0, 150, 255, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 150, 255, 0.4);
+        }
+        
+        .option.correct {
+            background: rgba(40, 180, 99, 0.7);
+            border-color: #28c76f;
+            animation: pulseCorrect 0.5s ease-in-out;
+        }
+        
+        @keyframes pulseCorrect {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .option.incorrect {
+            background: rgba(234, 84, 85, 0.7);
+            border-color: #ea5455;
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 1.3rem;
+            min-height: 30px;
+            margin: 15px 0;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feedback.correct {
+            color: #28c76f;
+            border: 1px solid #28c76f;
+        }
+        
+        .feedback.incorrect {
+            color: #ea5455;
+            border: 1px solid #ea5455;
+        }
+        
+        .continue-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.6);
+        }
+        
+        .continue-btn:disabled {
+            background: linear-gradient(to right, #555, #777);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 答题提示标签 */
+        .quiz-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.5);
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 进度条 */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 100, 180, 0.3);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        /* 控制面板 */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(0, 40, 80, 0.6);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #00e5ff;
+            font-size: 1.3rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #0088ff;
+        }
+        
+        .step-preview {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0, 150, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            background: #00c6ff;
+            transform: scale(1.3);
+        }
+        
+        .step-dot.completed {
+            background: #00ffaa;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .lab-container {
+                height: 400px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            
+            .step {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .lab-container {
+                height: 300px;
+            }
+            
+            .controls {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+            
+            .step {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+                min-width: 80px;
+            }
+            
+            .question-title {
+                font-size: 1.4rem;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .equipment-item {
+                width: 120px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>初中化学过滤操作实验</h1>
+            <p class="subtitle">通过动画展示过滤操作原理及"一贴二低三靠"操作规范</p>
+        </header>
+        
+        <div class="lab-container">
+            <div class="quiz-badge" id="quizBadge" style="display: none;">
+                <i class="fas fa-question-circle"></i> 请回答问题继续实验
+            </div>
+            <canvas id="labCanvas"></canvas>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="prevBtn" class="btn" disabled>
+                <i class="fas fa-arrow-left"></i> 上一步
+            </button>
+            <button id="startBtn" class="btn">
+                <i class="fas fa-play"></i> 开始实验
+            </button>
+            <button id="nextBtn" class="btn">
+                下一步 <i class="fas fa-arrow-right"></i>
+            </button>
+            <button id="resetBtn" class="btn">
+                <i class="fas fa-redo"></i> 重置实验
+            </button>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step" id="step1">准备器材</div>
+            <div class="step" id="step2">制作滤纸</div>
+            <div class="step" id="step3">放置漏斗</div>
+            <div class="step" id="step4">玻璃棒引流</div>
+            <div class="step" id="step5">过滤液体</div>
+            <div class="step" id="step6">完成过滤</div>
+        </div>
+        
+        <div class="control-panel">
+            <div class="panel-header">
+                <span>实验进度</span>
+                <span id="progressText">0/6</span>
+            </div>
+            <div class="step-preview">
+                <div class="step-dot" data-step="0"></div>
+                <div class="step-dot" data-step="1"></div>
+                <div class="step-dot" data-step="2"></div>
+                <div class="step-dot" data-step="3"></div>
+                <div class="step-dot" data-step="4"></div>
+                <div class="step-dot" data-step="5"></div>
+            </div>
+        </div>
+        
+        <div class="theory" id="theorySection">
+            <h2>
+                过滤操作原理与要点
+                <button class="toggle-btn" id="toggleTheory">−</button>
+            </h2>
+            <div class="theory-content">
+                <p>过滤是利用物质的溶解性差异，将液体和不溶于液体的固体分离开来的一种方法。</p>
+                
+                <p><span class="key-point">操作要点：一贴二低三靠</span></p>
+                <ul>
+                    <li><span class="key-point">一贴</span>：滤纸紧贴漏斗内壁</li>
+                    <li><span class="key-point">二低</span>：滤纸边缘低于漏斗边缘；液面低于滤纸边缘</li>
+                    <li><span class="key-point">三靠</span>：烧杯口紧靠玻璃棒；玻璃棒下端紧靠三层滤纸处；漏斗下端紧靠烧杯内壁</li>
+                </ul>
+                
+                <p>过滤操作中，混合物通过滤纸时，颗粒较大的固体不能通过滤纸孔隙，留在滤纸上形成滤渣；而液体和小颗粒物质可以通过滤纸，形成滤液。</p>
+            </div>
+        </div>
+        
+        <div class="equipment">
+            <div class="equipment-item">铁架台</div>
+            <div class="equipment-item">烧杯</div>
+            <div class="equipment-item">漏斗</div>
+            <div class="equipment-item">玻璃棒</div>
+            <div class="equipment-item">滤纸</div>
+        </div>
+    </div>
+    
+    <!-- 问题1：三靠问题 -->
+    <div class="question-container" id="question1">
+        <div class="question-header">
+            <h2 class="question-title">问题 1/3</h2>
+            <button class="close-btn" onclick="closeQuestion(1)">×</button>
+        </div>
+        <div class="question-text">
+            在过滤操作中，有"三靠"的要求，下列哪一项<strong>不属于</strong>"三靠"的内容？
+        </div>
+        <p class="hint">请点击选项选择答案</p>
+        <div class="options-container">
+            <div class="option" data-correct="false">烧杯口紧靠玻璃棒</div>
+            <div class="option" data-correct="true">滤纸紧靠漏斗边缘</div>
+            <div class="option" data-correct="false">玻璃棒下端紧靠三层滤纸处</div>
+            <div class="option" data-correct="false">漏斗下端紧靠烧杯内壁</div>
+        </div>
+        <div class="feedback" id="feedback1"></div>
+        <button class="continue-btn" id="continueBtn1" disabled>继续实验</button>
+    </div>
+    
+    <!-- 问题2：玻璃棒作用 -->
+    <div class="question-container" id="question2">
+        <div class="question-header">
+            <h2 class="question-title">问题 2/3</h2>
+            <button class="close-btn" onclick="closeQuestion(2)">×</button>
+        </div>
+        <div class="question-text">
+            在过滤操作中，玻璃棒的主要作用是什么？
+        </div>
+        <p class="hint">请点击选项选择答案</p>
+        <div class="options-container">
+            <div class="option" data-correct="true">引流液体，防止飞溅</div>
+            <div class="option" data-correct="false">搅拌混合物，加速溶解</div>
+            <div class="option" data-correct="false">支撑滤纸，防止塌陷</div>
+            <div class="option" data-correct="false">测量液体体积</div>
+        </div>
+        <div class="feedback" id="feedback2"></div>
+        <button class="continue-btn" id="continueBtn2" disabled>继续实验</button>
+    </div>
+    
+    <!-- 问题3：滤液不干净 -->
+    <div class="question-container" id="question3">
+        <div class="question-header">
+            <h2 class="question-title">问题 3/3</h2>
+            <button class="close-btn" onclick="closeQuestion(3)">×</button>
+        </div>
+        <div class="question-text">
+            如果过滤后得到的滤液仍然浑浊，可能的原因是什么？应该如何处理？
+        </div>
+        <p class="hint">请点击选项选择答案</p>
+        <div class="options-container">
+            <div class="option" data-correct="true">滤纸破损或操作不当，应重新过滤</div>
+            <div class="option" data-correct="false">漏斗位置太高，应降低漏斗</div>
+            <div class="option" data-correct="false">玻璃棒太粗，应更换细玻璃棒</div>
+            <div class="option" data-correct="false">烧杯不干净，应更换烧杯</div>
+        </div>
+        <div class="feedback" id="feedback3"></div>
+        <button class="continue-btn" id="continueBtn3" disabled>继续实验</button>
+    </div>
+    
+    <footer>
+        <p>© 2025 峨眉山市第四中学 | 初中化学水的净化教学智能体 | 过滤操作动画演示</p>
+    </footer>
+
+    <script>
+        // 获取Canvas和上下文
+        const canvas = document.getElementById('labCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas尺寸
+        function resizeCanvas() {
+            const container = document.querySelector('.lab-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawLab();
+        }
+        
+        // 初始化变量
+        let currentStep = 0;
+        const totalSteps = 6;
+        let animationProgress = 0;
+        let animationRunning = false;
+        let filterPaperAngle = 0;
+        let mixtureLevel = 0;
+        let filteredLevel = 0;
+        let questionAnswered = [false, false, false];
+        let completedSteps = [];
+        
+        // 实验器材位置和尺寸
+        const lab = {
+            standX: 0,
+            standHeight: 0,
+            beakerX: 0,
+            beakerY: 0,
+            beakerWidth: 0,
+            funnelX: 0,
+            funnelY: 0,
+            glassRodX: 0,
+            glassRodY: 0
+        };
+        
+        // 绘制实验室场景
+        function drawLab() {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+            
+            // 绘制实验室背景
+            drawBackground(width, height);
+            
+            // 更新器材位置
+            lab.standX = width * 0.3;
+            lab.standHeight = height * 0.7;
+            lab.beakerWidth = width * 0.15;
+            lab.beakerX = width * 0.7;
+            lab.beakerY = height * 0.65;
+            lab.funnelX = width * 0.3;
+            lab.funnelY = height * 0.3;
+            
+            // 绘制实验台
+            drawLabTable(width, height);
+            
+            // 绘制铁架台
+            drawIronStand();
+            
+            // 绘制烧杯
+            drawBeaker();
+            
+            // 根据当前步骤绘制不同内容
+            switch(currentStep) {
+                case 0: // 准备器材
+                    drawEquipment();
+                    break;
+                case 1: // 制作滤纸
+                    drawFilterPaperMaking();
+                    break;
+                case 2: // 放置漏斗
+                    drawFunnelPlacement();
+                    break;
+                case 3: // 玻璃棒引流
+                    drawGlassRod();
+                    break;
+                case 4: // 过滤液体
+                    drawFiltration();
+                    break;
+                case 5: // 完成过滤
+                    drawCompletedFiltration();
+                    break;
+            }
+            
+            // 绘制步骤标题
+            drawStepTitle();
+        }
+        
+        // 绘制背景
+        function drawBackground(width, height) {
+            // 绘制渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, "#0a1a2a");
+            gradient.addColorStop(1, "#152f4a");
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 绘制网格线
+            ctx.strokeStyle = "rgba(0, 100, 180, 0.2)";
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x < width; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < height; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制实验台
+        function drawLabTable(width, height) {
+            const tableHeight = height * 0.25;
+            const tableY = height - tableHeight;
+            
+            // 桌面
+            ctx.fillStyle = "#2a1e0f";
+            ctx.fillRect(0, tableY, width, tableHeight);
+            
+            // 桌面纹理
+            ctx.strokeStyle = "#3a2e1f";
+            ctx.lineWidth = 2;
+            
+            for (let y = tableY + 10; y < height; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制铁架台
+        function drawIronStand() {
+            const standWidth = canvas.width * 0.03;
+            const clampWidth = canvas.width * 0.1;
+            
+            // 底座
+            ctx.fillStyle = "#555";
+            ctx.fillRect(lab.standX - standWidth*3, lab.beakerY, standWidth*6, standWidth*2);
+            
+            // 支柱
+            ctx.fillStyle = "#777";
+            ctx.fillRect(lab.standX - standWidth/2, lab.beakerY - lab.standHeight, standWidth, lab.standHeight);
+            
+            // 铁圈
+            if (currentStep >= 2) {
+                ctx.fillStyle = "#888";
+                ctx.fillRect(lab.standX - clampWidth/2, lab.funnelY - 5, clampWidth, 10);
+            }
+        }
+        
+        // 绘制烧杯
+        function drawBeaker() {
+            const width = lab.beakerWidth;
+            const height = width * 1.2;
+            const x = lab.beakerX - width/2;
+            const y = lab.beakerY - height;
+            
+            // 烧杯轮廓
+            ctx.strokeStyle = "#a0d0ff";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + height);
+            ctx.lineTo(x + width * 0.8, y + height);
+            ctx.lineTo(x + width, y);
+            ctx.stroke();
+            
+            // 烧杯中的滤液
+            if (currentStep >= 4 && filteredLevel > 0) {
+                ctx.fillStyle = "rgba(100, 200, 255, 0.5)";
+                const fillHeight = height * filteredLevel;
+                ctx.beginPath();
+                ctx.moveTo(x, y + height - fillHeight);
+                ctx.lineTo(x, y + height);
+                ctx.lineTo(x + width * 0.8, y + height);
+                ctx.lineTo(x + width, y + height - fillHeight);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            // 烧杯标签
+            if (currentStep >= 4) {
+                ctx.fillStyle = "#a0d0ff";
+                ctx.font = "16px Arial";
+                ctx.fillText("滤液", lab.beakerX - 15, y + height + 20);
+            }
+        }
+        
+        // 绘制实验器材
+        function drawEquipment() {
+            // 绘制漏斗
+            drawFunnel(lab.funnelX, lab.funnelY + 100, false);
+            
+            // 绘制玻璃棒
+            drawGlassRod(lab.funnelX - 100, lab.funnelY + 50);
+            
+            // 绘制滤纸
+            drawFilterPaper(lab.funnelX - 120, lab.funnelY + 150);
+            
+            // 绘制混合液烧杯
+            drawMixtureBeaker();
+        }
+        
+        // 绘制混合液烧杯
+        function drawMixtureBeaker() {
+            const width = lab.beakerWidth * 0.8;
+            const height = width * 1.2;
+            const x = canvas.width * 0.1;
+            const y = canvas.height * 0.6;
+            
+            // 烧杯轮廓
+            ctx.strokeStyle = "#a0d0ff";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + height);
+            ctx.lineTo(x + width * 0.8, y + height);
+            ctx.lineTo(x + width, y);
+            ctx.stroke();
+            
+            // 混合液
+            ctx.fillStyle = "rgba(200, 150, 50, 0.7)";
+            const fillHeight = height * 0.7;
+            ctx.beginPath();
+            ctx.moveTo(x, y + height - fillHeight);
+            ctx.lineTo(x, y + height);
+            ctx.lineTo(x + width * 0.8, y + height);
+            ctx.lineTo(x + width, y + height - fillHeight);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 标签
+            ctx.fillStyle = "#a0d0ff";
+            ctx.font = "16px Arial";
+            ctx.fillText("固液混合物", x + width/2 - 40, y + height + 20);
+        }
+        
+        // 绘制滤纸制作过程
+        function drawFilterPaperMaking() {
+            const x = lab.funnelX;
+            const y = lab.funnelY + 100;
+            
+            // 绘制折叠中的滤纸
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(filterPaperAngle * Math.PI / 180);
+            
+            ctx.fillStyle = "#f0f0f0";
+            ctx.beginPath();
+            ctx.moveTo(-40, 0);
+            ctx.lineTo(0, -40 * (1 - filterPaperAngle/90));
+            ctx.lineTo(40, 0);
+            ctx.lineTo(0, 40 * (1 - filterPaperAngle/90));
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.restore();
+            
+            // 绘制漏斗
+            drawFunnel(x, y, false);
+        }
+        
+        // 绘制漏斗放置过程
+        function drawFunnelPlacement() {
+            const targetY = lab.funnelY;
+            const currentY = lab.funnelY + (100 - animationProgress);
+            
+            // 绘制滤纸
+            drawFunnel(lab.funnelX, currentY, true);
+            
+            // 绘制混合液烧杯
+            drawMixtureBeaker();
+        }
+        
+        // 绘制玻璃棒引流
+        function drawGlassRod() {
+            // 绘制漏斗
+            drawFunnel(lab.funnelX, lab.funnelY, true);
+            
+            // 绘制混合液烧杯
+            drawMixtureBeaker();
+            
+            // 绘制玻璃棒
+            const rodLength = canvas.height * 0.3;
+            const rodX = canvas.width * 0.2;
+            const rodY = lab.funnelY - rodLength/2 + animationProgress * 30;
+            
+            ctx.strokeStyle = "#a0d0ff";
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(rodX, rodY);
+            ctx.lineTo(rodX, rodY + rodLength);
+            ctx.stroke();
+            
+            // 绘制玻璃棒末端
+            ctx.fillStyle = "#70a0ff";
+            ctx.beginPath();
+            ctx.arc(rodX, rodY + rodLength, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制倾倒中的混合液
+            if (animationProgress > 30) {
+                ctx.fillStyle = "rgba(200, 150, 50, 0.7)";
+                ctx.beginPath();
+                ctx.moveTo(canvas.width * 0.1 + lab.beakerWidth * 0.8 * 0.7, canvas.height * 0.6 + lab.beakerWidth * 1.2 * 0.3);
+                ctx.lineTo(rodX, rodY + rodLength - 10);
+                ctx.lineTo(lab.funnelX, lab.funnelY - 20);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+        
+        // 绘制过滤过程
+        function drawFiltration() {
+            // 绘制漏斗和滤纸
+            drawFunnel(lab.funnelX, lab.funnelY, true);
+            
+            // 绘制混合液烧杯
+            drawMixtureBeaker();
+            
+            // 绘制玻璃棒
+            const rodLength = canvas.height * 0.3;
+            const rodX = canvas.width * 0.2;
+            const rodY = lab.funnelY - rodLength/2 + 30;
+            
+            ctx.strokeStyle = "#a0d0ff";
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(rodX, rodY);
+            ctx.lineTo(rodX, rodY + rodLength);
+            ctx.stroke();
+            
+            // 绘制漏斗中的混合液
+            ctx.fillStyle = "rgba(200, 150, 50, 0.7)";
+            const funnelLiquidHeight = 80 * mixtureLevel;
+            ctx.beginPath();
+            ctx.moveTo(lab.funnelX - 50, lab.funnelY);
+            ctx.lineTo(lab.funnelX - 50, lab.funnelY + funnelLiquidHeight);
+            ctx.lineTo(lab.funnelX + 50, lab.funnelY + funnelLiquidHeight);
+            ctx.lineTo(lab.funnelX + 50, lab.funnelY);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制过滤出的液体
+            if (filteredLevel > 0) {
+                ctx.fillStyle = "rgba(100, 200, 255, 0.5)";
+                const dropY = lab.funnelY + 100;
+                ctx.beginPath();
+                ctx.moveTo(lab.funnelX - 5, lab.funnelY + 80);
+                ctx.lineTo(lab.funnelX - 5, dropY);
+                ctx.lineTo(lab.funnelX + 5, dropY);
+                ctx.lineTo(lab.funnelX + 5, lab.funnelY + 80);
+                ctx.closePath();
+                ctx.fill();
+                
+                // 绘制下落的液滴
+                if (mixtureLevel > 0.1) {
+                    ctx.beginPath();
+                    ctx.arc(lab.funnelX, dropY + 10 + animationProgress * 2, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // 绘制滤纸上的固体
+            if (mixtureLevel > 0.3) {
+                ctx.fillStyle = "rgba(180, 120, 40, 0.8)";
+                ctx.beginPath();
+                ctx.arc(lab.funnelX, lab.funnelY + 20, 20 * mixtureLevel, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // 绘制完成过滤
+        function drawCompletedFiltration() {
+            // 绘制漏斗和滤纸
+            drawFunnel(lab.funnelX, lab.funnelY, true);
+            
+            // 绘制滤纸上的固体
+            ctx.fillStyle = "rgba(180, 120, 40, 0.8)";
+            ctx.beginPath();
+            ctx.arc(lab.funnelX, lab.funnelY + 20, 30, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制烧杯中的滤液
+            ctx.fillStyle = "rgba(100, 200, 255, 0.5)";
+            const beakerHeight = lab.beakerWidth * 1.2;
+            const fillHeight = beakerHeight * 0.7;
+            const x = lab.beakerX - lab.beakerWidth/2;
+            const y = lab.beakerY - beakerHeight;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y + beakerHeight - fillHeight);
+            ctx.lineTo(x, y + beakerHeight);
+            ctx.lineTo(x + lab.beakerWidth * 0.8, y + beakerHeight);
+            ctx.lineTo(x + lab.beakerWidth, y + beakerHeight - fillHeight);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制结果文本
+            ctx.fillStyle = "#00ffaa";
+            ctx.font = "bold 24px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("过滤完成！固体与液体成功分离", canvas.width/2, 60);
+            
+            ctx.fillStyle = "#70ffcc";
+            ctx.font = "20px Arial";
+            ctx.fillText("滤渣", lab.funnelX, lab.funnelY + 70);
+            ctx.fillText("滤液", lab.beakerX, lab.beakerY - lab.beakerWidth * 1.2 - 30);
+        }
+        
+        // 绘制漏斗
+        function drawFunnel(x, y, withFilterPaper) {
+            // 漏斗主体
+            ctx.fillStyle = "#a0d0ff";
+            ctx.beginPath();
+            ctx.moveTo(x - 60, y - 40);
+            ctx.lineTo(x + 60, y - 40);
+            ctx.lineTo(x + 50, y + 80);
+            ctx.lineTo(x - 50, y + 80);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 漏斗边框
+            ctx.strokeStyle = "#70a0ff";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // 漏斗颈
+            ctx.fillRect(x - 15, y + 80, 30, 60);
+            
+            // 滤纸
+            if (withFilterPaper) {
+                ctx.fillStyle = "#f8f8f8";
+                ctx.beginPath();
+                ctx.moveTo(x - 50, y);
+                ctx.lineTo(x + 50, y);
+                ctx.lineTo(x + 40, y + 70);
+                ctx.lineTo(x - 40, y + 70);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.strokeStyle = "#e0e0e0";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制玻璃棒
+        function drawGlassRod(x, y) {
+            ctx.strokeStyle = "#a0d0ff";
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + 150);
+            ctx.stroke();
+        }
+        
+        // 绘制滤纸
+        function drawFilterPaper(x, y) {
+            ctx.fillStyle = "#f8f8f8";
+            ctx.fillRect(x, y, 80, 80);
+            
+            ctx.strokeStyle = "#e0e0e0";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, 80, 80);
+        }
+        
+        // 绘制步骤标题
+        function drawStepTitle() {
+            const titles = [
+                "步骤1: 准备实验器材",
+                "步骤2: 折叠滤纸并放入漏斗",
+                "步骤3: 将漏斗固定在铁架台上",
+                "步骤4: 用玻璃棒引流倒入混合液",
+                "步骤5: 进行过滤操作",
+                "步骤6: 过滤完成"
+            ];
+            
+            if (currentStep < titles.length) {
+                ctx.fillStyle = "#00e5ff";
+                ctx.font = "bold 24px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(titles[currentStep], canvas.width/2, 40);
+            }
+        }
+        
+        // 更新步骤指示器
+        function updateStepIndicator() {
+            const progressText = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            
+            // 更新进度文本
+            progressText.textContent = `${completedSteps.length}/${totalSteps}`;
+            
+            // 更新进度条
+            const progressPercent = (completedSteps.length / totalSteps) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // 更新步骤状态
+            for (let i = 0; i < totalSteps; i++) {
+                const stepElement = document.getElementById(`step${i+1}`);
+                const dotElement = document.querySelector(`.step-dot[data-step="${i}"]`);
+                
+                if (i === currentStep) {
+                    stepElement.classList.add('active');
+                    stepElement.classList.remove('completed');
+                    if (dotElement) {
+                        dotElement.classList.add('active');
+                        dotElement.classList.remove('completed');
+                    }
+                } else {
+                    stepElement.classList.remove('active');
+                    if (dotElement) {
+                        dotElement.classList.remove('active');
+                    }
+                }
+                
+                if (completedSteps.includes(i)) {
+                    stepElement.classList.add('completed');
+                    if (dotElement) {
+                        dotElement.classList.add('completed');
+                    }
+                }
+            }
+            
+            // 更新按钮状态
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').disabled = currentStep === totalSteps - 1 || 
+                                                       (currentStep === 3 && !questionAnswered[0]) ||
+                                                       (currentStep === 4 && !questionAnswered[1]) ||
+                                                       (currentStep === 5 && !questionAnswered[2]);
+        }
+        
+        // 动画循环
+        function animate() {
+            if (!animationRunning) return;
+            
+            animationProgress++;
+            
+            switch(currentStep) {
+                case 1: // 折叠滤纸
+                    filterPaperAngle = Math.min(90, filterPaperAngle + 1);
+                    if (filterPaperAngle >= 90) {
+                        animationRunning = false;
+                        markStepCompleted();
+                        updateStepIndicator();
+                    }
+                    break;
+                case 2: // 放置漏斗
+                    if (animationProgress >= 100) {
+                        animationRunning = false;
+                        markStepCompleted();
+                        updateStepIndicator();
+                    }
+                    break;
+                case 3: // 玻璃棒引流
+                    if (animationProgress >= 100) {
+                        animationRunning = false;
+                        markStepCompleted();
+                        updateStepIndicator();
+                    }
+                    break;
+                case 4: // 过滤液体
+                    mixtureLevel = Math.min(1, mixtureLevel + 0.01);
+                    if (animationProgress % 10 === 0) {
+                        filteredLevel = Math.min(0.7, filteredLevel + 0.01);
+                    }
+                    if (mixtureLevel >= 1) {
+                        setTimeout(() => {
+                            animationRunning = false;
+                            markStepCompleted();
+                            updateStepIndicator();
+                        }, 1000);
+                    }
+                    break;
+            }
+            
+            drawLab();
+            
+            if (animationRunning) {
+                requestAnimationFrame(animate);
+            }
+        }
+        
+        // 标记当前步骤完成
+        function markStepCompleted() {
+            if (!completedSteps.includes(currentStep)) {
+                completedSteps.push(currentStep);
+            }
+        }
+        
+        // 开始当前步骤动画
+        function startStepAnimation() {
+            // 在特定步骤显示问题
+            if (currentStep === 3 && !questionAnswered[0]) {
+                showQuestion(1);
+                return;
+            }
+            
+            if (currentStep === 4 && !questionAnswered[1]) {
+                showQuestion(2);
+                return;
+            }
+            
+            if (currentStep === 5 && !questionAnswered[2]) {
+                showQuestion(3);
+                return;
+            }
+            
+            animationRunning = true;
+            animationProgress = 0;
+            
+            // 重置特定步骤的变量
+            if (currentStep === 1) {
+                filterPaperAngle = 0;
+            } else if (currentStep === 4) {
+                mixtureLevel = 0;
+                filteredLevel = 0;
+            }
+            
+            animate();
+        }
+        
+        // 显示问题对话框
+        function showQuestion(questionNum) {
+            const questionId = `question${questionNum}`;
+            const quizBadge = document.getElementById('quizBadge');
+            
+            document.getElementById(questionId).style.display = 'block';
+            quizBadge.style.display = 'block';
+            
+            // 重置选项状态
+            const options = document.querySelectorAll(`#${questionId} .option`);
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            
+            // 重置反馈和按钮
+            document.getElementById(`feedback${questionNum}`).textContent = '';
+            document.getElementById(`feedback${questionNum}`).className = 'feedback';
+            document.getElementById(`continueBtn${questionNum}`).disabled = true;
+            
+            // 添加选项事件监听器
+            options.forEach(option => {
+                option.onclick = function() {
+                    const isCorrect = this.getAttribute('data-correct') === 'true';
+                    const feedback = document.getElementById(`feedback${questionNum}`);
+                    
+                    // 移除其他选项的选中状态
+                    options.forEach(opt => {
+                        if (opt !== this) {
+                            opt.classList.remove('correct', 'incorrect');
+                        }
+                    });
+                    
+                    if (isCorrect) {
+                        this.classList.add('correct');
+                        feedback.textContent = '✓ 回答正确！';
+                        feedback.className = 'feedback correct';
+                        document.getElementById(`continueBtn${questionNum}`).disabled = false;
+                        questionAnswered[questionNum-1] = true;
+                        
+                        // 更新UI
+                        updateStepIndicator();
+                    } else {
+                        this.classList.add('incorrect');
+                        feedback.textContent = '✗ 回答错误，请再试一次';
+                        feedback.className = 'feedback incorrect';
+                    }
+                };
+            });
+        }
+        
+        // 关闭问题对话框
+        function closeQuestion(questionNum) {
+            document.getElementById(`question${questionNum}`).style.display = 'none';
+            document.getElementById('quizBadge').style.display = 'none';
+        }
+        
+        // 下一步
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateStepIndicator();
+                startStepAnimation();
+            }
+        }
+        
+        // 上一步
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateStepIndicator();
+                drawLab();
+            }
+        }
+        
+        // 重置实验
+        function resetExperiment() {
+            currentStep = 0;
+            animationProgress = 0;
+            animationRunning = false;
+            filterPaperAngle = 0;
+            mixtureLevel = 0;
+            filteredLevel = 0;
+            questionAnswered = [false, false, false];
+            completedSteps = [];
+            updateStepIndicator();
+            drawLab();
+            
+            // 关闭所有问题对话框
+            for (let i = 1; i <= 3; i++) {
+                closeQuestion(i);
+            }
+        }
+        
+        // 初始化
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 设置按钮事件
+            document.getElementById('startBtn').addEventListener('click', startStepAnimation);
+            document.getElementById('nextBtn').addEventListener('click', nextStep);
+            document.getElementById('prevBtn').addEventListener('click', prevStep);
+            document.getElementById('resetBtn').addEventListener('click', resetExperiment);
+            
+            // 设置问题继续按钮
+            document.getElementById('continueBtn1').addEventListener('click', () => {
+                closeQuestion(1);
+                startStepAnimation();
+            });
+            
+            document.getElementById('continueBtn2').addEventListener('click', () => {
+                closeQuestion(2);
+                startStepAnimation();
+            });
+            
+            document.getElementById('continueBtn3').addEventListener('click', () => {
+                closeQuestion(3);
+                startStepAnimation();
+            });
+            
+            // 步骤点击事件
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.addEventListener('click', () => {
+                    // 只能跳转到已完成的步骤
+                    if (completedSteps.includes(index) || index === 0) {
+                        currentStep = index;
+                        updateStepIndicator();
+                        drawLab();
+                    }
+                });
+            });
+            
+            // 步骤点点击事件
+            document.querySelectorAll('.step-dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const stepIndex = parseInt(dot.getAttribute('data-step'));
+                    // 只能跳转到已完成的步骤
+                    if (completedSteps.includes(stepIndex) || stepIndex === 0) {
+                        currentStep = stepIndex;
+                        updateStepIndicator();
+                        drawLab();
+                    }
+                });
+            });
+            
+            // 理论部分折叠/展开
+            const toggleBtn = document.getElementById('toggleTheory');
+            const theorySection = document.getElementById('theorySection');
+            
+            toggleBtn.addEventListener('click', () => {
+                theorySection.classList.toggle('collapsed');
+                toggleBtn.textContent = theorySection.classList.contains('collapsed') ? '+' : '−';
+            });
+            
+            // 初始化步骤指示器
+            updateStepIndicator();
+        });
+    </script>
+</body>
+</html>

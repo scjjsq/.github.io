@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初中化学水的净化教学智能体</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 15px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffcc00, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 20px;
+            color: #e0f7fa;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .experiments-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .experiment-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .experiment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .card-preview {
+            height: 150px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-preview i {
+            font-size: 3.5rem;
+            color: #ffcc00;
+        }
+        
+        .card-content {
+            padding: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #ffcc00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-description {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #e0f7fa;
+            margin-bottom: 12px;
+            min-height: 60px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-button {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #21CBF3, #2196F3);
+        }
+        
+        .experiment-id {
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: rgba(0, 100, 200, 0.6);
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        
+        /* 二级页面样式 */
+        #experiment-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 10, 30, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .experiment-header {
+            padding: 15px;
+            background: rgba(0, 30, 60, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+        }
+        
+        .experiment-title {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-button {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
+            transform: translateY(-2px);
+        }
+        
+        .experiment-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+        
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            margin-top: 30px;
+            color: #bbdefb;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
+            50% { transform: translateY(-100px) translateX(20px) scale(1); opacity: 0.5; }
+            100% { transform: translateY(-200px) translateX(-20px) scale(1.5); opacity: 0; }
+        }
+        
+        @media (max-width: 1200px) {
+            .experiments-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .experiments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .experiment-card {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-flask"></i> 初中化学水的净化教学智能体</h1>
+            <p class="subtitle">通过智能体演示和教学初中化学核心概念与实验原理</p>
+        </header>
+        
+        <div class="experiments-grid">
+            <!-- 自来水厂净水过程 - 图片已更新 -->
+            <div class="experiment-card" data-target="water-plant">
+                <div class="card-preview">
+                    <i class="fas fa-faucet"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-faucet"></i> 自来水厂净水过程</h3>
+                    <p class="card-description">展示自来水从原水到清洁水的处理过程，包含混凝、沉淀、过滤、消毒等关键步骤。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始实验</button>
+                        <div class="experiment-id">实验一</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 过滤操作动画 -->
+            <div class="experiment-card" data-target="filtration">
+                <div class="card-preview">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-filter"></i> 过滤操作实验</h3>
+                    <p class="card-description">通过动画展示过滤操作原理及"一贴二低三靠"操作规范，包含答题互动环节。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始实验</button>
+                        <div class="experiment-id">实验二</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 活性炭吸附模拟 -->
+            <div class="experiment-card" data-target="adsorption">
+                <div class="card-preview">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-vial"></i> 活性炭吸附红墨水</h3>
+                    <p class="card-description">观察活性炭如何吸附水中的红墨水分子使水变清澈，展示物理吸附原理。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始实验</button>
+                        <div class="experiment-id">实验三</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 软水硬水微观动画 -->
+            <div class="experiment-card" data-target="water-hardness">
+                <div class="card-preview">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-tint"></i> 软水与硬水微观示意图</h3>
+                    <p class="card-description">通过微观粒子运动展示软水与硬水的区别，包含钙离子、镁离子等粒子的运动轨迹。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始实验</button>
+                        <div class="experiment-id">实验四</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 蒸馏操作实验动画 -->
+            <div class="experiment-card" data-target="distillation">
+                <div class="card-preview">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-fire"></i> 蒸馏实验操作演示</h3>
+                    <p class="card-description">直观展示蒸馏原理与标准实验操作流程，包含温度监控、冷凝过程等关键环节。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始实验</button>
+                        <div class="experiment-id">实验五</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新增：水的净化练习 -->
+            <div class="experiment-card" data-target="water-purification-practice">
+                <div class="card-preview">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title"><i class="fas fa-water"></i> 水的净化综合练习</h3>
+                    <p class="card-description">包含选择题、填空题等多种题型，覆盖净水流程、过滤操作等核心知识点。</p>
+                    <div class="card-footer">
+                        <button class="card-button"><i class="fas fa-play"></i> 开始练习</button>
+                        <div class="experiment-id">实验六</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 二级实验容器 -->
+    <div id="experiment-container">
+        <div class="experiment-header">
+            <h2 class="experiment-title"><i class="fas fa-flask"></i> <span id="current-experiment-title">实验名称</span></h2>
+            <button class="back-button"><i class="fas fa-arrow-left"></i> 返回主页面</button>
+        </div>
+        <iframe class="experiment-frame" id="experiment-frame" src=""></iframe>
+    </div>
+    
+    <footer>
+        <p>© 2025 峨眉山市第四中学 | 初中化学水的净化教学智能体 | 交互式实验模拟</p>
+    </footer>
+
+    <script>
+        // 创建浮动粒子效果
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                particle.style.left = `${x}%`;
+                particle.style.top = `${y}%`;
+                
+                // 随机大小
+                const size = Math.random() * 15 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机动画
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s infinite ease-in-out ${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // 实验映射关系
+        const experiments = {
+            'water-plant': {
+                title: '自来水厂净水过程模拟',
+                file: '01自来水厂净水过程模拟.html'
+            },
+            'filtration': {
+                title: '过滤操作实验',
+                file: '02过滤操作动画和提问.html'
+            },
+            'adsorption': {
+                title: '活性炭吸附红墨水',
+                file: '03活性炭吸附模拟动画.html'
+            },
+            'water-hardness': {
+                title: '软水与硬水微观示意图',
+                file: '04软水硬水微观动画.html'
+            },
+            'distillation': {
+                title: '蒸馏实验操作演示',
+                file: '05蒸馏操作实验动画.html'
+            },
+            'water-purification-practice': {
+                title: '水的净化综合练习',
+                file: '06水的净化练习.html'
+            }
+        };
+        
+        // 设置实验页面
+        function setupExperimentPage(target) {
+            const experiment = experiments[target];
+            if (!experiment) return;
+            
+            // 更新标题
+            document.getElementById('current-experiment-title').textContent = experiment.title;
+            
+            // 设置iframe源
+            const frame = document.getElementById('experiment-frame');
+            frame.src = experiment.file;
+            
+            // 显示实验容器
+            document.getElementById('experiment-container').style.display = 'flex';
+            
+            // 滚动到顶部
+            window.scrollTo(0, 0);
+        }
+        
+        // 返回主页面
+        function backToMain() {
+            document.getElementById('experiment-container').style.display = 'none';
+            const frame = document.getElementById('experiment-frame');
+            frame.src = '';
+        }
+        
+        // 事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建粒子效果
+            createParticles();
+            
+            // 实验卡片点击事件
+            const cards = document.querySelectorAll('.experiment-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    setupExperimentPage(target);
+                });
+            });
+            
+            // 返回按钮事件
+            document.querySelector('.back-button').addEventListener('click', backToMain);
+        });
+    </script>
+</body>
+</html>
